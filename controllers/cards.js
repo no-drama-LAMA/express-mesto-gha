@@ -2,7 +2,6 @@ const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((cards) => res.send(cards))
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
@@ -22,61 +21,65 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deletCard = (req, res) => {
-  if (req.params.cardId.length === 24) {
-    Card.findByIdAndRemove(req.params.cardId)
-      .then((card) => {
-        if (!card) {
-          res.status(404).send({ message: 'Карточка не найдена' });
-          return;
-        }
-        res.send({ message: 'Карточка удалена' });
-      })
-      .catch(() => res.status(404).send({ message: 'Карточка не найдена' }));
-  } else {
-    res.status(400).send({ message: 'Переданы некорректные данные' });
-  }
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send({ message: 'Карточка удалена' });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 module.exports.likeCard = (req, res) => {
   const likes = req.user._id;
-  if (req.params.cardId.length === 24) {
-    Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $addToSet: { likes } },
-      { new: 'true' },
-    )
-      .populate(['owner', 'likes'])
-      .then((card) => {
-        if (!card) {
-          res.status(404).send({ message: 'Карточка не найдена' });
-          return;
-        }
-        res.send(card);
-      })
-      .catch(() => res.status(404).send({ message: 'Карточка не найдена' }));
-  } else {
-    res.status(400).send({ message: 'Переданы некорректные данные' });
-  }
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes } },
+    { new: 'true' },
+  )
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
   const likes = req.user._id;
-  if (req.params.cardId.length === 24) {
-    Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $pull: { likes } },
-      { new: 'true' },
-    )
-      .populate(['owner', 'likes'])
-      .then((card) => {
-        if (!card) {
-          res.status(404).send({ message: 'Карточка не найдена' });
-          return;
-        }
-        res.send(card);
-      })
-      .catch(() => res.status(404).send({ message: 'Карточка не найдена' }));
-  } else {
-    res.status(400).send({ message: 'Переданы некорректные данные' });
-  }
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes } },
+    { new: 'true' },
+  )
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
