@@ -7,10 +7,9 @@ const signinRouter = require('./signin');
 
 const auth = require('../middlewares/auth');
 
-router.use(auth);
-
 router.use('/signin', signinRouter);
 router.use('/signup', signupRouter);
+router.use(auth);
 router.use('/cards', cardsRouter);
 router.use('/users', usersRouter);
 
