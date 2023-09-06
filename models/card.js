@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const cardSchema = new mongoose.Schema({
   name: { // имя карточки
@@ -10,6 +11,10 @@ const cardSchema = new mongoose.Schema({
   link: { // ссылка на картинку
     type: String, // это строка
     required: [true, 'Заполните это поле.'], // обязательное поле
+    validate: {
+      validator: (v) => validator.isURL(v),
+      message: 'URL указан неправильно',
+    },
   },
   owner: { // ссылка на модель автора карточки
     type: mongoose.Schema.Types.ObjectId, // тип ObjectId
