@@ -92,7 +92,8 @@ module.exports.login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch((err) => { next(err); });
+    .catch(next);
+    // .catch((err) => { next(err); });
 };
 
 module.exports.getMe = (req, res, next) => {
