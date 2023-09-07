@@ -97,12 +97,6 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail()
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return res.send(user);
-    })
+    .then((user) => res.send(user))
     .catch(next);
 };
