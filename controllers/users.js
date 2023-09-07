@@ -33,7 +33,7 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash, // записываем хеш в базу
-    })
+    }))
       .then((user) => res.status(201).send(user))
       .catch((err) => {
         if (err.code === 11000) {
@@ -43,7 +43,7 @@ module.exports.createUser = (req, res, next) => {
         } else {
           next(err);
         }
-      }));
+      });
 };
 
 module.exports.updateUser = (req, res, next) => {
