@@ -31,7 +31,7 @@ module.exports.deletCard = (req, res, next) => {
         throw new ForbiddenError('Недьзя удалять карточки других пользователей');
       }
       return Card.deleteOne(card)
-      .then(() => res.send({ message: 'Карточка удалена' }));
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
