@@ -7,12 +7,6 @@ const {
 
 router.get('/', getUsers); // возвращает всех пользователей
 
-router.get('/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().required().hex().length(24),
-  }),
-}), getUserId); // возвращает пользователя по _id
-
 router.get('/me', getCurrentUser); // возвращает информацию о текущем пользователе
 
 router.patch('/me', celebrate({
@@ -30,5 +24,11 @@ router.patch('/me/avatar', celebrate({
     }),
   }),
 }), updateAvatar); // обновляет аватар
+
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().hex().length(24),
+  }),
+}), getUserId); // возвращает пользователя по _id
 
 module.exports = router;
