@@ -25,6 +25,7 @@ const cardSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId, // это строка
       ref: 'user',
+      default: [],
     },
   ],
   createdAt: { // дата создания
