@@ -1,13 +1,18 @@
+require('dotenv').config();
+const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
 const NotFoundError = require('./errors/NotFound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
+
+app.use(cors());
 
 app.use(helmet()); // Заголовки безопасности можно проставлять автоматически
 
@@ -15,9 +20,6 @@ const limiter = rateLimit({ // ограничивает количество з�
   windowMs: 15 * 60 * 1000, // за 15 минут
   max: 100, // можно совершить максимум 100 запросов с одного IP
 });
-
-// подключаем rate-limiter
-app.use(limiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,11 +29,17 @@ mongoose.connect(DB_URL, {
   useUnifiedTopology: true,
 });
 
+app.use(requestLogger); // подключаем логгер запросов
+
+app.use(limiter);
+
 app.use('/', require('./routes/index'));
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не существует'));
 });
+
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
